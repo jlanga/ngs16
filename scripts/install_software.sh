@@ -17,14 +17,16 @@ make -j 8
 cp samtools ../../bin/
 popd
 
-# bwa
+# bwa-0.7.12
 wget http://sourceforge.net/projects/bio-bwa/files/bwa-0.7.12.tar.bz2
 tar -xvf bwa-0.7.12.tar.bz2
 pushd bwa-0.7.12
 make -j 8
 cp bwa ../../bin/
 
-
-
+# trimmomatic-0.35
+wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.35.zip
+unzip Trimmomatic-0.35.zip
+cp Trimmomatic-0.25/trimmomatic-0.35.jar ../bin/
 
 popd
