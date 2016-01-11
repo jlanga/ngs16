@@ -8,7 +8,8 @@ import sys
 def subsample_integers(set_size= 1000, n_subsamples= 10, subsample_sizes= 1000, seed= 1):
     """
     Make a sample without replacement of a set of size `set_size`.
-    `subsample_sizes` should be a list of integers that denote the size of the size of each subsample.
+    `subsample_sizes` should be a list of integers that denote the size of the 
+        size of each subsample.
     Note that all subsamples are disjoint.
     """
     # Check inputs, check sizes of the subsamples and set sizes....
@@ -25,7 +26,8 @@ def subsample_integers(set_size= 1000, n_subsamples= 10, subsample_sizes= 1000, 
         replace= False
     )
     
-    # Split the subsample, and throw away the last element of the np.split object (it contains the remaining parts)
+    # Split the subsample, and throw away the last element of the np.split 
+    # object (it contains the remaining parts)
     unsorted_samples = np.split(
         unsorted_array,
         np.cumsum(subsamples)[0:len(subsamples)]
@@ -38,9 +40,9 @@ def subsample_integers(set_size= 1000, n_subsamples= 10, subsample_sizes= 1000, 
 
 
 
-def write_indexes(subsamples, tag= "test", path="./"):
+def write_indexes(subsamples, prefix="./unnamed"):
     for i in range(len(subsamples) - 1 ):
-        filename = path + tag + "_%02d.idx" % (i + 1)
+        filename = prefix + "_%02d.idx" % (i + 1)
         with open(filename, "w") as f:
             f.write("\n".join(map(str, subsamples[i])))
 
@@ -49,20 +51,19 @@ def write_indexes(subsamples, tag= "test", path="./"):
 if __name__ == "__main__":
     
     usage = "subsample_integers.py tag out_dir set_size n_parts part_size seed"
-    example_usage = "integer_sampling.py test ./ 1000 10 100 42"
+    example_usage = "integer_sampling.py test 1000 10 100 42"
     
-    if len(sys.argv) != 7:
-        sys.exit("ERROR! Wrong number of parameters\n" +  usage + "\n" + example_usage)
-        print(usage)
-        print(example_usage)
-        sys.exit(-1)
+    if len(sys.argv) != 6:
+        sys.exit(
+            "ERROR! Wrong number of parameters\n" + 
+                usage + "\n" +
+                example_usage)
         
-    tag       = sys.argv[1]
-    out_dir   = sys.argv[2]
-    set_size  = int(sys.argv[3])
-    n_parts   = int(sys.argv[4])
-    part_size = int(sys.argv[5])
-    seed      = int(sys.argv[6])
+    prefix    = sys.argv[1]
+    set_size  = int(sys.argv[2])
+    n_parts   = int(sys.argv[3])
+    part_size = int(sys.argv[4])
+    seed      = int(sys.argv[5])
     
     subsamples = subsample_integers(
         set_size,
@@ -73,7 +74,6 @@ if __name__ == "__main__":
     
     write_indexes(
         subsamples,
-        tag= tag,
-        path= out_dir
+        prefix
     )
 
