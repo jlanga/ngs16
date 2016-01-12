@@ -20,8 +20,22 @@ reference:
 
 
 
+software:
+    trinity:        ./src/trinityrnaseq-2.1.1/Trinity
+    trimmomatic:    java -jar ./src/Trimmomatic-0.35/trimmomatic-0.35.jar
+    gzip:           pigz
+    hisat2build:    ./bin/hisat2-build
+    hisat2:         ./bin/hisat2-align-s
+    bwa:            ./bin/bwa
+    samtools0:      ./bin/samtools0
+
+
 random:
     seed: "42"
+
+subsamplings:
+    n_samples:   "20"
+    sample_size: "1000000"
 
 trimmomatic_params:
     SLIDINGWINDOW:4:5 LEADING:5 TRAILING:5 MINLEN:25 TOPHRED33
@@ -29,4 +43,5 @@ trimmomatic_params:
 trinity_params:
     memory:     60G
     additional: "" #--normalize_reads
+
 
