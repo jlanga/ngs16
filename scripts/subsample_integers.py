@@ -42,7 +42,7 @@ def subsample_integers(set_size= 1000, n_subsamples= 10, subsample_sizes= 1000, 
 
 def write_indexes(subsamples, prefix="./unnamed"):
     for i in range(len(subsamples) - 1 ):
-        filename = prefix + "_%02d.idx" % (i + 1)
+        filename = prefix + "_%d.idx" % (i + 1)
         with open(filename, "w") as f:
             f.write("\n".join(map(str, subsamples[i])))
 

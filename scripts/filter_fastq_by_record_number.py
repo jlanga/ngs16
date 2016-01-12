@@ -45,7 +45,7 @@ if __name__ == "__main__":
     usage = "filter_fastq_by_record_number.py indexes.txt < in.fastq > out.fastq"
     
     if len(sys.argv) != 2:
-        sys.stderr("ERROR! Incorrect number of inputs.\n" + usage )
+        sys.exit("ERROR! Incorrect number of inputs.\n" + usage )
     
     index_file = sys.argv[1]
     
