@@ -29,4 +29,19 @@ wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-
 unzip Trimmomatic-0.35.zip
 cp Trimmomatic-0.25/trimmomatic-0.35.jar ../bin/
 
+# stringtie-1.2.0
+wget http://ccb.jhu.edu/software/stringtie/dl/stringtie-1.2.0.Linux_x86_64.tar.gz
+tar xvf stringtie-1.2.0.Linux_x86_64.tar.gz
+cp stringtie-1.2.0.Linux_x86_64/stringtie ../bin/stringtie
+
+# trinity-2.1.1
+wget https://github.com/trinityrnaseq/trinityrnaseq/archive/v2.1.1.tar.gz
+tar xvf v2.1.1.tar.gz
+pushd trinityrnaseq-2.1.1
+make -j 8 
+make -j 8 plugins
+make test
+popd
+ln -s ../src/trinityrnaseq-2.1.1/Trinity ../bin/Trinity
+
 popd
