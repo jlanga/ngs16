@@ -2,22 +2,82 @@ samples_pe:
     brain:
         forward: /home/share/raw_data/drer/rna_phylofish/SRR1524238_1.fastq.gz
         reverse: /home/share/raw_data/drer/rna_phylofish/SRR1524238_2.fastq.gz
-        adaptor: ./src/Trimmomatic-0.33/adapters/TruSeq3-PE-2.fa
+        adaptor: ./src/Trimmomatic-0.35/adapters/TruSeq3-PE-2.fa
         phred:   phred33
         reads:   35368936
     gills:
         forward: /home/share/raw_data/drer/rna_phylofish/SRR1524239_1.fastq.gz
         reverse: /home/share/raw_data/drer/rna_phylofish/SRR1524239_2.fastq.gz
-        adaptor: ./src/Trimmomatic-0.33/adapters/TruSeq3-PE-2.fa
+        adaptor: ./src/Trimmomatic-0.35/adapters/TruSeq3-PE-2.fa
         phred:   phred33
         reads:   54472116
+    heart:
+        forward: /home/share/raw_data/drer/rna_phylofish/SRR1524240_1.fastq.gz
+        reverse: /home/share/raw_data/drer/rna_phylofish/SRR1524240_2.fastq.gz
+        adaptor: ./src/Trimmomatic-0.35/adapters/TruSeq3-PE-2.fa
+        phred:   phred33
+        reads:   85672616
+    muscle:
+        forward: /home/share/raw_data/drer/rna_phylofish/SRR1524241_1.fastq.gz
+        reverse: /home/share/raw_data/drer/rna_phylofish/SRR1524241_2.fastq.gz
+        adaptor: ./src/Trimmomatic-0.35/adapters/TruSeq3-PE-2.fa
+        phred:   phred33
+        reads:   34032976
+    liver:
+        forward: /home/share/raw_data/drer/rna_phylofish/SRR1524242_1.fastq.gz
+        reverse: /home/share/raw_data/drer/rna_phylofish/SRR1524242_2.fastq.gz
+        adaptor: ./src/Trimmomatic-0.35/adapters/TruSeq3-PE-2.fa
+        phred:   phred33
+        reads:   59248034
+    kidney:
+        forward: /home/share/raw_data/drer/rna_phylofish/SRR1524243_1.fastq.gz
+        reverse: /home/share/raw_data/drer/rna_phylofish/SRR1524243_2.fastq.gz
+        adaptor: ./src/Trimmomatic-0.35/adapters/TruSeq3-PE-2.fa
+        phred:   phred33
+        reads:   46371614
+    bones:
+        forward: /home/share/raw_data/drer/rna_phylofish/SRR1524244_1.fastq.gz
+        reverse: /home/share/raw_data/drer/rna_phylofish/SRR1524244_2.fastq.gz
+        adaptor: ./src/Trimmomatic-0.35/adapters/TruSeq3-PE-2.fa
+        phred:   phred33
+        reads:   96715965
+    intestine:
+        forward: /home/share/raw_data/drer/rna_phylofish/SRR1524245_1.fastq.gz
+        reverse: /home/share/raw_data/drer/rna_phylofish/SRR1524245_2.fastq.gz
+        adaptor: ./src/Trimmomatic-0.35/adapters/TruSeq3-PE-2.fa
+        phred:   phred33
+        reads:   43187341
+    embryos:
+        forward: /home/share/raw_data/drer/rna_phylofish/SRR1524246_1.fastq.gz
+        reverse: /home/share/raw_data/drer/rna_phylofish/SRR1524246_2.fastq.gz
+        adaptor: ./src/Trimmomatic-0.35/adapters/TruSeq3-PE-2.fa
+        phred:   phred33
+        reads:   55185501
+    unf_eggs:
+        forward: /home/share/raw_data/drer/rna_phylofish/SRR1524247_1.fastq.gz
+        reverse: /home/share/raw_data/drer/rna_phylofish/SRR1524247_2.fastq.gz
+        adaptor: ./src/Trimmomatic-0.35/adapters/TruSeq3-PE-2.fa
+        phred:   phred33
+        reads:   24878233
+    ovary:
+        forward: /home/share/raw_data/drer/rna_phylofish/SRR1524248_1.fastq.gz
+        reverse: /home/share/raw_data/drer/rna_phylofish/SRR1524248_2.fastq.gz
+        adaptor: ./src/Trimmomatic-0.35/adapters/TruSeq3-PE-2.fa
+        phred:   phred33
+        reads:   22026486
+    testis:
+        forward: /home/share/raw_data/drer/rna_phylofish/SRR1524249_1.fastq.gz
+        reverse: /home/share/raw_data/drer/rna_phylofish/SRR1524249_2.fastq.gz
+        adaptor: ./src/Trimmomatic-0.35/adapters/TruSeq3-PE-2.fa
+        phred:   phred33
+        reads:   59897686
 
 
 
 reference:
     dna: ftp://ftp.ensembl.org/pub/release-82/fasta/danio_rerio/dna/Danio_rerio.GRCz10.dna_sm.toplevel.fa.gz
-    cdna:   ftp://ftp.ensembl.org/pub/release-82/fasta/danio_rerio/cdna/Danio_rerio.GRCz10.cdna.all.fa.gz
-
+    cdna: ftp://ftp.ensembl.org/pub/release-82/fasta/danio_rerio/cdna/Danio_rerio.GRCz10.cdna.all.fa.gz
+    gff: ftp://ftp.ensembl.org/pub/release-83/gff3/danio_rerio/Danio_rerio.GRCz10.83.gff3.gz
 
 
 software:
@@ -25,23 +85,37 @@ software:
     trimmomatic:    java -jar ./src/Trimmomatic-0.35/trimmomatic-0.35.jar
     gzip:           pigz
     hisat2build:    ./bin/hisat2-build
-    hisat2:         ./bin/hisat2-align-s
+    hisat2:         ./bin/hisat2
+    stringtie:      ./bin/stringtie
     bwa:            ./bin/bwa
     samtools0:      ./bin/samtools0
+
 
 
 random:
     seed: "42"
 
+
+
 subsamplings:
     n_samples:   "20"
     sample_size: "1000000"
 
+
+
 trimmomatic_params:
     SLIDINGWINDOW:4:5 LEADING:5 TRAILING:5 MINLEN:25 TOPHRED33
 
+
+
+hisat2params:
+    other: "--no-unal --maxins 800"
+
+
+
 trinity_params:
-    memory:     60G
+    memory:     10G
     additional: "" #--normalize_reads
+
 
 
