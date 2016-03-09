@@ -1,0 +1,18 @@
+rule raw_make_links_pe:
+    input:
+        forward= lambda wildcards: config["samples_pe"][wildcards.tissue]["forward"],
+        reverse= lambda wildcards: config["samples_pe"][wildcards.tissue]["reverse"]
+    output:
+        forward= raw + "{tissue}_1.fq.gz",
+        reverse= raw + "{tissue}_2.fq.gz"
+    threads:
+        1
+    log:
+        "logs/raw/make_links_pe_{tissue}.log"
+    benchmark:
+        "benchmarks/raw/make_links_pe_{tissue}.json"
+    shell:
+        """
+        ln -s $(readlink -f {input.forward}) {output.forward} 2>  {log}
+        ln -s $(readlink -f {input.reverse}) {output.reverse} 2>> {log}
+        """

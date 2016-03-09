@@ -1,0 +1,17 @@
+# Folder variables
+## QC
+raw        = "data/fastq_raw/"
+sampled    = "data/fastq_samples/"
+trimmed    = "data/fastq_trimmed/"
+# References
+references = "data/reference/"
+indexes    = "data/index/"
+## genome-based
+bam_dna    = "data/bamg/"
+gff_dna    = "data/gffg/"
+## transcriptome-based
+bam_rna    = "data/bamt/"
+gff_rna    = "data/gfft/"
+# de novo assembly based
+assembly   = "data/assembly/"
+bam_ass    = "data/bama/"

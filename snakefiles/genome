@@ -1,0 +1,121 @@
+rule genome_hisat2index:
+    input:
+        fa = references + "dna.fa"
+    output:
+        files = expand(
+            indexes + "dna.{extensions}.bt2",
+            extensions = "1 2 3 4 5 6 7 8".split()),
+        mock  = touch(indexes + "dna")
+    threads:
+        1
+    log:
+        "logs/genome/hisat2index.log"
+    benchmark:
+        "benchmarks/genome/hisat2index.json"
+    shell:
+        """
+        {hisat2build} \
+            {input.fa} \
+            {output.mock} \
+        > {log} 2>&1 
+        """
+
+
+
+rule genome_hisat2_tissue_sampling:
+    input:
+        forward  = trimmed + "{tissue}_{sampling}_1.fq.gz",
+        reverse  = trimmed + "{tissue}_{sampling}_2.fq.gz",
+        unpaired = trimmed + "{tissue}_{sampling}_u.fq.gz",
+        index    = indexes + "dna"
+    output:
+        bam      = bam_dna + "{tissue}_{sampling}.bam"
+    params:
+        other_params = config["hisat2params"]["other"],
+        sq_id        = "{tissue}",
+        sq_library   = "LB:truseq_{tissue}",
+        sq_platform  = "PL:Illumina",
+        sq_sample    = "SM:{tissue}_{sampling}"
+    threads:
+        24
+    log:
+        "logs/genome/hisat2_{tissue}_{sampling}.log"
+    benchmark:
+        "benchmarks/genome/hisat2_{tissue}_{sampling}.json"
+    shell:
+        """
+        ( {hisat2} \
+            --rg-id {params.sq_id} \
+            --rg {params.sq_library} \
+            --rg {params.sq_platform} \
+            --rg {params.sq_sample} \
+            --threads {threads} \
+            --dta \
+            {params.other_params} \
+            -x {input.index} \
+            -1 {input.forward} \
+            -2 {input.reverse} \
+            -U {input.unpaired} |
+        {samtools0} view \
+            -S \
+            -h \
+            -u \
+            - |
+        {samtools0} rmdup \
+            -s - - |
+        {samtools0} sort \
+            -@ {threads} \
+            -l 9 \
+            -o \
+            - \
+            - \
+        > {output.bam} ) \
+        2>  {log}
+        """
+
+
+
+def list_gbams_for_stringtie(wildcards):
+    partitions = list([str(x + 1) for x in range(int(wildcards.sampling))])
+    forwards = [
+        bam_dna + "/" + wildcards.tissue + "_" + partition + ".bam"
+        for partition in partitions
+    ]
+    return forwards
+
+
+
+rule genome_stringtie_tissue_sampling:
+    input:
+        bam = list_gbams_for_stringtie,
+        gff = references + "annotation.gff"
+    output:
+        gff = gff_dna + "{tissue}_{sampling}.gff"
+    threads:
+        1
+    params:
+        label   = "{tissue}_{sampling}",
+        bam_aux = gff_dna + "{tissue}_{sampling}.bam"
+    log:
+        "logs/genome/stringtie_{tissue}_{sampling}.log"
+    benchmark:
+        "benchmarks/genome/stringtie_{tissue}_{sampling}.json"
+    shell:
+        """
+        {samtools0} merge \
+            -l 9 \
+            -@ 24 \
+            {params.bam_aux} \
+            {input.bam} \
+        2> {log}
+        
+        {stringtie} \
+            {params.bam_aux} \
+            -G {input.gff} \
+            -l {params.label} \
+            -o {output.gff} \
+            -p {threads} \
+        2>> {log}
+        
+        rm {params.bam_aux}
+        """

@@ -1,0 +1,9 @@
+# Software
+gzip        = config["software"]["gzip"]
+trimmomatic = config["software"]["trimmomatic"]
+hisat2build = config["software"]["hisat2build"]
+hisat2      = config["software"]["hisat2"]
+stringtie   = config["software"]["stringtie"]
+bwa         = config["software"]["bwa"]
+trinity     = config["software"]["trinity"]
+samtools0   = config["software"]["samtools0"]

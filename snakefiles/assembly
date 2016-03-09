@@ -1,0 +1,63 @@
+def list_fastqs_to_assemble_forward(wildcards):
+    partitions = list([str(x + 1) for x in range(int(wildcards.sampling))])
+    forwards = [
+        trimmed + wildcards.tissue + "_" + partition + "_1.fq.gz"
+        for partition in partitions
+    ]
+    return forwards
+
+
+
+def string_fastqs_to_assemble_forward(wildcards):
+    return ",".join(list(list_fastqs_to_assemble_forward(wildcards)))
+
+
+
+def list_fastqs_to_assemble_reverse(wildcards):
+    partitions = list([str(x + 1) for x in range(int(wildcards.sampling))])
+    reverses = [
+        trimmed + wildcards.tissue + "_" + partition + "_2.fq.gz"
+        for partition in partitions
+    ]
+    return reverses
+
+
+
+def string_fastqs_to_assemble_reverse(wildcards):
+    return ",".join(list(list_fastqs_to_assemble_reverse(wildcards)))
+
+
+
+rule assembly_run_trinity_tissue_sampling:
+    input:
+        left  = list_fastqs_to_assemble_forward,
+        right = list_fastqs_to_assemble_reverse
+    output:
+        fasta = assembly + "{tissue}_{sampling}.fa"
+    threads:
+        8
+    params:
+        left  = string_fastqs_to_assemble_forward,
+        right = string_fastqs_to_assemble_reverse, 
+        memory= config["trinity_params"]["memory"],
+        outdir= assembly + "trinity_{tissue}_{sampling}"
+    log:
+        "logs/assembly/{tissue}_{sampling}.log"
+    benchmark:
+        "benchmarks/assembly/{tissue}_{sampling}.log"
+    shell:
+        """
+        ./bin/Trinity \
+            --seqType fq \
+            --max_memory {params.memory} \
+            --left {params.left} \
+            --right {params.right} \
+            --CPU {threads} \
+            --full_cleanup \
+            --output {params.outdir} \
+        > {log}
+        
+        mv {params.outdir}.Trinity.fasta {output.fasta}
+        
+        #rm {input.left}.readcount {input.right}.readcount
+        """
