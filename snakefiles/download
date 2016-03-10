@@ -1,4 +1,7 @@
 rule download_dna:
+    """
+    Download the genome in fasta format from the url provided in config.yaml
+    """
     output:
         fa = references + "dna.fa"
     threads:
@@ -22,6 +25,10 @@ rule download_dna:
 
 
 rule download_cdna:
+    """
+    Download the transcriptome (all RNAs) in fasta format from the url provided
+    in config.yaml
+    """
     output:
         fa = references + "cdna.fa"
     threads:
@@ -45,6 +52,10 @@ rule download_cdna:
 
 
 rule download_gff:
+    """
+    Download the genome annotation in GFF/GTF format from the URL provided in 
+    the config.yaml file.
+    """
     output:
         gff = references + "annotation.gff"
     params:

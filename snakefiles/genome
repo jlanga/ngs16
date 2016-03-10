@@ -1,4 +1,7 @@
 rule genome_hisat2index:
+    """
+    Index the fasta genome for HiSat2.
+    """
     input:
         fa = references + "dna.fa"
     output:
@@ -23,6 +26,10 @@ rule genome_hisat2index:
 
 
 rule genome_hisat2_tissue_sampling:
+    """
+    Perform the mapping and bam conversions:
+    HiSat2 | samtools view | samtools rmdup | samtools sort
+    """
     input:
         forward  = trimmed + "{tissue}_{sampling}_1.fq.gz",
         reverse  = trimmed + "{tissue}_{sampling}_2.fq.gz",
@@ -75,19 +82,52 @@ rule genome_hisat2_tissue_sampling:
 
 
 
-def list_gbams_for_stringtie(wildcards):
+def list_gbams_to_merge(wildcards):
+    """
+    This is a helping function to compose a list of paths to the different bams.
+    For i = 5
+    """
     partitions = list([str(x + 1) for x in range(int(wildcards.sampling))])
     forwards = [
-        bam_dna + "/" + wildcards.tissue + "_" + partition + ".bam"
+        bam_dna + wildcards.tissue + "_" + partition + ".bam"
         for partition in partitions
     ]
     return forwards
 
 
+rule genome_samtools_merge_tissue_sampling:
+    input:
+        bam = list_gbams_to_merge
+    output:
+        bam = bam_dna_merged + "{tissue}_{sampling}.bam"
+    threads:
+        4
+    log:
+        "logs/genome/samtools_merge_{tissue}_{sampling}.log"
+    benchmark:
+        "benchmarks/genome/samtools_merge_{tissue}_{sampling}.json"
+    run:
+        import os
+        if len(input) == 1:
+            shell("ln --symbolic $(readlink --canonicalize {input.bam}) {output.bam}")
+        else:
+            shell(
+                """
+                {samtools0} merge \
+                -l 9 \
+                -@ 24 \
+                {output.bam} \
+                {input.bam} \
+                2> {log}
+                """
+            )
+
+
+
 
 rule genome_stringtie_tissue_sampling:
     input:
-        bam = list_gbams_for_stringtie,
+        bam = bam_dna_merged + "{tissue}_{sampling}.bam",
         gff = references + "annotation.gff"
     output:
         gff = gff_dna + "{tissue}_{sampling}.gff"
@@ -95,27 +135,17 @@ rule genome_stringtie_tissue_sampling:
         1
     params:
         label   = "{tissue}_{sampling}",
-        bam_aux = gff_dna + "{tissue}_{sampling}.bam"
     log:
         "logs/genome/stringtie_{tissue}_{sampling}.log"
     benchmark:
         "benchmarks/genome/stringtie_{tissue}_{sampling}.json"
     shell:
         """
-        {samtools0} merge \
-            -l 9 \
-            -@ 24 \
-            {params.bam_aux} \
-            {input.bam} \
-        2> {log}
-        
         {stringtie} \
-            {params.bam_aux} \
+            {input.bam} \
             -G {input.gff} \
             -l {params.label} \
             -o {output.gff} \
             -p {threads} \
         2>> {log}
-        
-        rm {params.bam_aux}
         """

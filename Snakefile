@@ -1,6 +1,9 @@
 shell.prefix("set -euo pipefail;")
 configfile: "config.yaml"
 
+
+TISSUES = config["samples_pe"]
+
 include: "snakefiles/folders"
 include: "snakefiles/software"
 include: "snakefiles/download"
@@ -12,31 +15,24 @@ include: "snakefiles/transcriptome"
 include: "snakefiles/assembly"
 
 # Variables
-TISSUES = config["samples_pe"]
-
-
-
-
-
-
 
 rule all:
     input:
-        #expand(
-        #    gff_dna + "/{tissue}_{sampling}.gff",
-        #    tissue = config["samples_pe"],
-        #    sampling = sample_idx
-        #),
-        #expand(
-        #    gff_merged_rna + "/{tissue}_{sampling}.gff",
-        #    tissue = config["samples_pe"],
-        #    sampling = sample_idx
-        #),
+        expand(
+            gff_dna + "{tissue}_{sampling}.gff",
+            tissue = config["samples_pe"],
+            sampling = sample_idx
+        ),
         expand(
             assembly + "{tissue}_{sampling}.fa",
             tissue = config["samples_pe"],
             sampling = sample_idx
         )
+        #expand(
+        #    gff_merged_rna + "/{tissue}_{sampling}.gff",
+        #    tissue = config["samples_pe"],
+        #    sampling = sample_idx
+        #),
             
         
 

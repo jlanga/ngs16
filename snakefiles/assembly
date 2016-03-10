@@ -1,4 +1,8 @@
 def list_fastqs_to_assemble_forward(wildcards):
+    """
+    Make from the wildcards a list of paths to the trimmed and forward (i.e., 
+    data/fastq_trimmed/{sample}_{partition}_1.fq.gz)
+    """
     partitions = list([str(x + 1) for x in range(int(wildcards.sampling))])
     forwards = [
         trimmed + wildcards.tissue + "_" + partition + "_1.fq.gz"
@@ -9,11 +13,18 @@ def list_fastqs_to_assemble_forward(wildcards):
 
 
 def string_fastqs_to_assemble_forward(wildcards):
+    """
+    Merge the list of _1 paths into one string, separating all paths by a comma.
+    """
     return ",".join(list(list_fastqs_to_assemble_forward(wildcards)))
 
 
 
 def list_fastqs_to_assemble_reverse(wildcards):
+    """
+    Make from the wildcards a list of paths to the trimmed and forward (i.e., 
+    data/fastq_trimmed/{sample}_{partition}_2.fq.gz)
+    """
     partitions = list([str(x + 1) for x in range(int(wildcards.sampling))])
     reverses = [
         trimmed + wildcards.tissue + "_" + partition + "_2.fq.gz"
@@ -24,11 +35,20 @@ def list_fastqs_to_assemble_reverse(wildcards):
 
 
 def string_fastqs_to_assemble_reverse(wildcards):
+    """
+    Merge the list of _2 paths into one string, separating all paths by a comma.
+    """
     return ",".join(list(list_fastqs_to_assemble_reverse(wildcards)))
 
 
 
 rule assembly_run_trinity_tissue_sampling:
+    """
+    Assemble with trinity. Inputs are a list, but in params we have them as a 
+    very long string.
+    Remember that this assembly is incremental (i.e., for partition 5 we take 
+    the fastqs from partition 1-5).
+    """
     input:
         left  = list_fastqs_to_assemble_forward,
         right = list_fastqs_to_assemble_reverse

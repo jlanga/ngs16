@@ -29,7 +29,7 @@ rule transcriptome_hisat2t_tissue_sampling:
         unpaired = trimmed + "{tissue}_{sampling}_u.fq.gz",
         index    = indexes + "cdna"
     output:
-        bam      = bam_rna + "/{tissue}_{sampling}.bam"
+        bam      = bam_rna + "{tissue}_{sampling}.bam"
     params:
         other_params = config["hisat2params"]["other"],
         sq_id        = "{tissue}",

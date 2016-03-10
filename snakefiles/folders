@@ -8,6 +8,7 @@ references = "data/reference/"
 indexes    = "data/index/"
 ## genome-based
 bam_dna    = "data/bamg/"
+bam_dna_merged = "data/bamg_merged/"
 gff_dna    = "data/gffg/"
 ## transcriptome-based
 bam_rna    = "data/bamt/"
