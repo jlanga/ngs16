@@ -149,3 +149,43 @@ rule genome_stringtie_tissue_sampling:
             -p {threads} \
         2>> {log}
         """
+
+
+
+rule genome_counts:
+    input:
+        gffs =  expand(
+            gff_dna + "{tissue}_{sampling}.gff",
+            tissue = config["samples_pe"],
+            sampling = sample_idx
+        )
+    output:
+        tsv = gff_dna + "counts.tsv"
+    threads:
+        1
+    params:
+        tissues = " ".join(config["samples_pe"]),
+        samplings = " ".join(sample_idx)
+    log:
+        "logs/genome/counts.log"
+    benchmark:
+        "benchmarks/genome/counts.json"
+    shell:
+        """
+        cat /dev/null > {output.tsv}
+        
+        for tissue in {params.tissues}; do
+            for sampling in {params.samplings}; do
+                hits=$( \
+                    grep -v ^# {gff_dna}${{tissue}}_${{sampling}}.gff |
+                    awk '{{if($3 == "transcript") print}}' |
+                    cut -f 9 |
+                    grep reference_id |
+                    egrep -o 'ENSDART[[:digit:]]{{11}}' |
+                    sort -u |
+                    wc -l \
+                )
+                echo ${{tissue}}\t${{sampling}}\t${{hits}} >> {output.tsv}
+            done
+        done
+        """

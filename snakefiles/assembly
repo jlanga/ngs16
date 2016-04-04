@@ -81,3 +81,90 @@ rule assembly_run_trinity_tissue_sampling:
         
         #rm {input.left}.readcount {input.right}.readcount
         """
+
+
+
+rule assembly_makeblastdb_cdna:
+    input:
+        fa = references + "cdna.fa"
+    output:
+        db = touch(db + "cdna")
+    threads:
+        1
+    log:
+        "logs/assembly/makeblastdb_cdna.log"
+    benchmark:
+        "benchmarks/assembly/makeblastdb_cdna.json"
+    shell:
+        """
+        makeblastdb \
+            -dbtype nucl \
+            -title "Danio Rerio cDNA" \
+            -in {input.fa} \
+            -out {output.db} \
+        2> {log} 1>&2
+        """
+
+
+
+rule assembly_blastn_cdna_tissue_sampling:
+    input:
+        fa = assembly + "{tissue}_{sampling}.fa",
+        db = db + "cdna"
+    output:
+        tsv = blastn + "{tissue}_{sampling}.tsv"
+    threads:
+        1 # Low intensity
+    log:
+        "logs/assembly/blastn_cdna_{tissue}_{sampling}.log"
+    benchmark:
+        "benchmarks/assembly/blastn_cdna_{tissue}_{sampling}.json"
+    shell:
+        """
+         blastn \
+            -query {input.fa} \
+            -db {input.db} \
+            -max_target_seqs 1 \
+            -out {output.tsv} \
+            -evalue 1e-5 \
+            -outfmt 6 \
+            -num_threads {threads} \
+        2> {log} 1>&2
+        """
+
+
+
+rule assemby_counts:
+    """
+    From the blastn results, make a tsv consisting of # unique hits in the 
+    transcriptome per tissue and sampling:
+    tissue TAB sampling TAB hits
+    """
+    input:
+        tsvs= expand(
+            blastn + "{tissue}_{sampling}.tsv",
+            tissue = config["samples_pe"],
+            sampling = sample_idx
+        )
+    output:
+        tsv = blastn + "matches.tsv"
+    params:
+        tissues = " ".join(config["samples_pe"]),
+        samplings = " ".join(sample_idx)
+    threads:
+        1
+    log:
+        "logs/assembly/counts.log"
+    benchmark:
+        "benchmarks/assembly/counts.json"
+    shell:
+        """
+        cat /dev/null > {output.tsv}
+        
+        for tissue in {params.tissues}; do
+            for sampling in {params.samplings}; do
+                hits=$(cut -f 2 < {blastn}${{tissue}}_${{sampling}}.tsv | sort -u | wc -l)
+                echo ${{tissue}}\t${{sampling}}\t${{hits}} >> {output.tsv}
+            done
+        done
+        """

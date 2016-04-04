@@ -3,6 +3,11 @@ configfile: "config.yaml"
 
 
 TISSUES = config["samples_pe"]
+n_samples   = config["subsamplings"]["n_samples"],
+sample_size = config["subsamplings"]["sample_size"],
+sample_idx  = list([str(x+1) for x in range(int(n_samples[0]))])
+SEED    = config["random"]["seed"] 
+
 
 include: "snakefiles/folders"
 include: "snakefiles/software"
@@ -16,6 +21,8 @@ include: "snakefiles/assembly"
 
 # Variables
 
+
+
 rule all:
     input:
         expand(
@@ -27,12 +34,15 @@ rule all:
             assembly + "{tissue}_{sampling}.fa",
             tissue = config["samples_pe"],
             sampling = sample_idx
-        )
-        #expand(
-        #    gff_merged_rna + "/{tissue}_{sampling}.gff",
-        #    tissue = config["samples_pe"],
-        #    sampling = sample_idx
-        #),
+        ),
+        expand(
+            blastn + "{tissue}_{sampling}.tsv",
+            tissue = config["samples_pe"],
+            sampling = sample_idx
+        ),
+        blastn + "matches.tsv",
+        gff_dna + "counts.tsv"
+        
             
         
 

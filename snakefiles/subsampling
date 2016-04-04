@@ -1,8 +1,4 @@
 # Variables - Sampling
-n_samples   = config["subsamplings"]["n_samples"],
-sample_size = config["subsamplings"]["sample_size"],
-sample_idx  = list([str(x+1) for x in range(int(n_samples[0]))])
-SEED    = config["random"]["seed"] 
 
 rule subsampling_subsample_integers_sample:
     output:
