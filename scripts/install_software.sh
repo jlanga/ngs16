@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+mkdir -p src
 pushd src
 
 # hisat2-2.0.1
